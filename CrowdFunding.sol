@@ -46,9 +46,9 @@ contract CrowdFunding{
         require(block.timestamp>deadline && raisedAmount<target,"You are not eligible for refund");
         require(contributors[msg.sender]>0);
         address payable user=payable(msg.sender);
-        user.transfer(contributors[msg.sender]);
-        contributors[msg.sender]=0;
-        
+        uint256 amount = contributors[msg.sender];
+        contributors[msg.sender]=0; //To prevent a reenterency attack we need to change the state of the function before we transfer the ethers
+        user.transfer(amount);
     }
     modifier onlyManger(){
         require(msg.sender==manager,"Only manager can calll this function");
